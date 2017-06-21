@@ -1,7 +1,12 @@
 #!/bin/bash
 
+MYCWD=$(pwd)
+TZ=${TZ:-America/Chicago}
 export CHROME_BIN=google-chrome
 
+rm /etc/localtime
+cd /etc; ln -s /usr/share/zoneinfo/$TZ localtime
+cd $MYCWD
 
 if [ -s /LINK ]; then
   echo "cat /LINKS |xargs -n1 -I{} nice -n $NICENESS $CHROME_BIN {}"

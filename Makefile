@@ -1,6 +1,6 @@
 .PHONY: all help build run builddocker rundocker kill rm-image rm clean enter logs
 
-all: run
+all: help
 
 help:
 	@echo ""
@@ -15,7 +15,7 @@ help:
 build: NAME TAG builddocker
 
 # run a plain container
-run: build rm rundocker
+run: TZ build rm rundocker
 
 temp: build temprm tempdocker
 
@@ -24,6 +24,7 @@ rundocker: TAG NAME HOMEDIR NICENESS
 	$(eval NAME := $(shell cat NAME))
 	$(eval HOMEDIR := $(shell cat HOMEDIR))
 	$(eval TAG := $(shell cat TAG))
+	$(eval TZ := $(shell cat TZ))
 	$(eval NICENESS := $(shell cat NICENESS))
 	$(eval PROXY := $(shell cat PROXY))
 	mkdir -p $(HOMEDIR)/chrome-sandbox/Downloads
@@ -44,6 +45,7 @@ rundocker: TAG NAME HOMEDIR NICENESS
 	-v /tmp/.X11-unix:/tmp/.X11-unix \
 	-e DISPLAY=unix$(DISPLAY) \
 	-e NICENESS=$(NICENESS) \
+	-e TZ=$(TZ) \
 	-v /dev/shm:/dev/shm \
 	-v /etc/hosts:/etc/hosts \
 	-v $(TMP):/tmp \
@@ -63,6 +65,7 @@ rundocker: TAG NAME HOMEDIR NICENESS
 tempdocker: TAG NAME
 	$(eval TMP := $(shell mktemp -d --suffix=tempchromeTMP))
 	$(eval NAME := $(shell cat NAME))
+	$(eval TZ := $(shell cat TZ))
 	$(eval TAG := $(shell cat TAG))
 	$(eval PROXY := $(shell cat PROXY))
 	$(eval NICENESS := $(shell cat NICENESS))
@@ -73,7 +76,7 @@ tempdocker: TAG NAME
 	mkdir -p $(TMP)/tmp
 	sudo chmod -R 770 $(TMP)
 	sudo chown -R 999:999 $(TMP)
-	@docker run -d --name=$(NAME) \
+	@docker run -d --name=$(NAME)-temp \
 	--cidfile="tempCID" \
 	-v $(TMP)/tmp:/tmp \
 	--memory 3gb \
@@ -83,6 +86,7 @@ tempdocker: TAG NAME
 	-v /tmp/.X11-unix:/tmp/.X11-unix \
 	-e DISPLAY=unix$(DISPLAY) \
 	-e NICENESS=$(NICENESS) \
+	-e TZ=$(TZ) \
 	-v /dev/shm:/dev/shm \
 	-v /etc/hosts:/etc/hosts \
 	-v $(TMP)/chrome-sandbox/Downloads:/root/Downloads \
@@ -125,7 +129,7 @@ temp-rm-image:
 	-@docker rm `cat tempCID`
 	-@rm tempCID
 
-temprm: kill temp-rm-image
+temprm: tempkill temp-rm-image
 
 tempclean: temprm
 
@@ -155,4 +159,9 @@ LINK:
 NICENESS:
 	@while [ -z "$$NICENESS" ]; do \
 		read -r -p "Enter the links you wish to associate with this container [NICENESS]: " NICENESS; echo "$$NICENESS">>NICENESS; cat NICENESS; \
+	done ;
+
+TZ:
+	@while [ -z "$$TZ" ]; do \
+		read -r -p "Enter the timezone you wish to associate with this container [America/Denver]: " TZ; echo "$$TZ">>TZ; cat TZ; \
 	done ;
