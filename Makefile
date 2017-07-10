@@ -158,7 +158,7 @@ LINK:
 
 NICENESS:
 	@while [ -z "$$NICENESS" ]; do \
-		read -r -p "Enter the links you wish to associate with this container [NICENESS]: " NICENESS; echo "$$NICENESS">>NICENESS; cat NICENESS; \
+		read -r -p "Enter the niceness you wish to associate with this container [NICENESS]: " NICENESS; echo "$$NICENESS">>NICENESS; cat NICENESS; \
 	done ;
 
 TZ:
