@@ -2,11 +2,15 @@
 
 MYCWD=$(pwd)
 #TZ=${TZ:-America/Chicago}
-export CHROME_BIN=google-chrome
+CHROME_BIN=google-chrome
 
 #rm /etc/localtime
 #cd /etc; ln -s /usr/share/zoneinfo/$TZ localtime
 cd $MYCWD
+
+if [ -s /SANDBOX ]; then
+  SANDBOX_OPT=--no-sandbox
+fi
 
 if [ -s /LINK ]; then
   echo "cat /LINKS |xargs -n1 -I{} nice -n $NICENESS $CHROME_BIN {}"
@@ -17,11 +21,14 @@ if [ -s /LINK ]; then
   --user-data-dir=/data \
   --host-resolver-rules="$MAP" \
   --proxy-server="$PROXY" \
+  $SANDBOX_OPT \
   `cat /LINK`
 else
-  nice -n $NICENESS google-chrome \
+  nice -n $NICENESS $CHROME_BIN \
   --restore-last-session \
   --user-data-dir=/data \
+  --host-resolver-rules="$MAP" \
   --proxy-server="$PROXY" \
-  --host-resolver-rules="$MAP"
+  $SANDBOX_OPT \
+  'http://bokbot.org/'
 fi
