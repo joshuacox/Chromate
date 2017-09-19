@@ -1,6 +1,6 @@
 .PHONY: all help build run builddocker rundocker kill rm-image rm clean enter logs
 
-all: help
+all: run
 
 help:
 	@echo ""
@@ -54,7 +54,7 @@ rundocker: TAG NAME HOMEDIR NICENESS
 	-v $(HOMEDIR)/chrome-sandbox/Pictures:/home/chrome/Pictures \
 	-v $(HOMEDIR)/chrome-sandbox/Torrents:/home/chrome/Torrents \
 	-v $(HOMEDIR)/chrome-sandbox/.chrome:/data \
-	--security-opt seccomp:/etc/docker/seccomp/chrome.json \
+	--security-opt seccomp=$(HOME)/chrome.json \
 	--device /dev/snd \
 	--device /dev/dri \
 	--device /dev/bus/usb \
@@ -93,7 +93,7 @@ tempdocker: TAG NAME
 	-v $(TMP)/chrome-sandbox/Pictures:/root/Pictures \
 	-v $(TMP)/chrome-sandbox/Torrents:/root/Torrents \
 	-v $(TMP)/chrome-sandbox/.chrome:/data \
-	--security-opt seccomp:/etc/docker/seccomp/chrome.json \
+	--security-opt seccomp=$(HOME)/chrome.json \
 	--device /dev/snd \
 	--device /dev/dri \
 	--device /dev/bus/usb \

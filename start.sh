@@ -1,11 +1,11 @@
 #!/bin/bash
 
 MYCWD=$(pwd)
-TZ=${TZ:-America/Chicago}
+#TZ=${TZ:-America/Chicago}
 export CHROME_BIN=google-chrome
 
-rm /etc/localtime
-cd /etc; ln -s /usr/share/zoneinfo/$TZ localtime
+#rm /etc/localtime
+#cd /etc; ln -s /usr/share/zoneinfo/$TZ localtime
 cd $MYCWD
 
 if [ -s /LINK ]; then
