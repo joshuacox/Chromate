@@ -29,6 +29,7 @@ else
   --user-data-dir=/data \
   --host-resolver-rules="$MAP" \
   --proxy-server="$PROXY" \
+  --password-store="$PWSTORE" \
   $SANDBOX_OPT \
   'http://bokbot.org/'
 fi

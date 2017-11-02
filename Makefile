@@ -19,12 +19,13 @@ run: build rm rundocker
 
 temp: build temprm tempdocker
 
-rundocker: TAG NAME HOMEDIR NICENESS LINK
+rundocker: TAG NAME HOMEDIR NICENESS PWSTORE LINK
 	$(eval TMP := $(shell mktemp -d --suffix=chromeTMP))
 	$(eval NAME := $(shell cat NAME))
 	$(eval HOMEDIR := $(shell cat HOMEDIR))
 	$(eval TAG := $(shell cat TAG))
 	$(eval NICENESS := $(shell cat NICENESS))
+	$(eval PWSTORE := $(shell cat PWSTORE))
 	$(eval PROXY := $(shell cat PROXY))
 	xhost +
 	mkdir -p $(HOMEDIR)/chrome-sandbox/Downloads
@@ -45,6 +46,7 @@ rundocker: TAG NAME HOMEDIR NICENESS LINK
 	-v /tmp/.X11-unix:/tmp/.X11-unix \
 	-e DISPLAY=unix$(DISPLAY) \
 	-e NICENESS=$(NICENESS) \
+	-e PWSTORE=$(PWSTORE) \
 	-v /dev/shm:/dev/shm \
 	-v /etc/hosts:/etc/hosts \
 	-v $(TMP):/tmp \
@@ -159,6 +161,11 @@ LINK:
 NICENESS:
 	@while [ -z "$$NICENESS" ]; do \
 		read -r -p "Enter the niceness you wish to associate with this container [NICENESS]: " NICENESS; echo "$$NICENESS">>NICENESS; cat NICENESS; \
+	done ;
+
+PWSTORE:
+	@while [ -z "$$PWSTORE" ]; do \
+		read -r -p "Enter the pwstore you wish to associate with this container [gnome,kwallet,basic,detect]: " PWSTORE; echo "$$PWSTORE">>PWSTORE; cat PWSTORE; \
 	done ;
 
 TZ:
